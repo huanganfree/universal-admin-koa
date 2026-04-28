@@ -1,12 +1,14 @@
-import { RouterContext, RouterMiddleware } from "@koa/router";
+import { RouterContext } from "@koa/router";
 import { Next } from "koa";
-import { responseSuccess } from "../utils/response";
+import { responseFail, responseSuccess } from "../utils/response";
+import { UserRequestBody } from "../types/appState";
 
 export function login(ctx: RouterContext, next: Next) {
-    console.log('postUserLogin==ctx', ctx.request.body);
-
-    if(ctx.request.body?.username == 'ha'){
-        responseSuccess(ctx)
+    const body = ctx.request.body as UserRequestBody
+    if (body.username == 'ha') {
+        responseSuccess(ctx, 'xxaaa')
+    } else {
+        responseFail(ctx, undefined, 400)
     }
 }
 
