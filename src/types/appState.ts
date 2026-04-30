@@ -1,7 +1,8 @@
 export interface AppState {
-    username?:string
+    username?: string
 }
 
 export interface UserRequestBody {
     username?: string;
-  }
+    id?:any
+}

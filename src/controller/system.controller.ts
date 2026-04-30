@@ -5,10 +5,10 @@ import { UserRequestBody } from "../types/appState";
 
 export function login(ctx: RouterContext, next: Next) {
     const body = ctx.request.body as UserRequestBody
-    if (body.username == 'ha') {
-        responseSuccess(ctx, 'xxaaa')
+    if (body.id) {
+        responseSuccess(ctx)
     } else {
-        responseFail(ctx, undefined, 400)
+        responseFail(ctx, '该用户不存在', 400)
     }
 }
 
