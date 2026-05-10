@@ -1,5 +1,5 @@
 /**
- * 控制器，校验参数，处理请求，调用服务层处理业务逻辑，返回响应
+ * 校验参数，调用请求处理业务逻辑，处理响应
  */
 import { Context, Next } from "koa";
 import { responseFail, responseSuccess } from "../utils/response";
@@ -30,10 +30,10 @@ export async function login(ctx: Context, next: Next) {
         responseFail(ctx, '密码错误', 400)
       }
     } else {
-      responseFail(ctx, '用户不存在', 400)
+      responseFail(ctx, '账号或密码错误', 400)
     }
   } else {
-    responseFail(ctx, '该用户不存在', 400)
+    responseFail(ctx, '请输入账号或密码', 400)
   }
 }
 

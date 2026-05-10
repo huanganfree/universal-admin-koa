@@ -15,9 +15,11 @@ export async function serviceGetUserInfo(ctx: Context) {
 // 新增角色
 export async function serviceAddRole(ctx: Context) {
     const { userId } = ctx.state.user
-    const { roleName, roleCode, description } = ctx.request.body as RoleBody
-    const roleIn = await Role.create({ roleName, roleCode, description, createdBy: userId, updatedBy: userId });
+    const { roleName, roleCode, description,status } = ctx.request.body as RoleBody
+    const roleIn = await Role.create({ roleName, roleCode,status, description, createdBy: userId, updatedBy: userId });
     console.log('roleIn.toJSON()=', roleIn.toJSON());
     return roleIn.toJSON() as RoleBody
     
 }
+
+// 获取角色列表

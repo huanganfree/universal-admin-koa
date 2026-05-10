@@ -1,16 +1,17 @@
 import { CreationOptional, DataTypes, InferAttributes, InferCreationAttributes, Model, Sequelize } from 'sequelize';
 
-function initRole(sequelize: Sequelize) {
+ interface UserModel extends Model<InferAttributes<UserModel>, InferCreationAttributes<UserModel>> {
+    id: CreationOptional<number>;
+    roleName: string;
+    roleCode: string;
+    description: CreationOptional<string>;
+    status: CreationOptional<number>;
+    createdBy: number;
+    updatedBy: number
+}
 
-    interface UserModel extends Model<InferAttributes<UserModel>, InferCreationAttributes<UserModel>> {
-        id: CreationOptional<number>;
-        roleName: string;
-        roleCode: string;
-        description: string;
-        status: number;
-        createdBy: number;
-        updatedBy: number
-    }
+function initRole(sequelize: Sequelize) {
+    
     const role = sequelize.define<UserModel>(
         'Role',
         {

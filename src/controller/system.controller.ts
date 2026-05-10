@@ -13,10 +13,13 @@ export async function getUserInfo(ctx: Context, next: Next) {
 }
 
 export interface RoleBody {
-    roleName: string,
-    roleCode: string,
     id?:number,
-    [key: string]: unknown
+    roleName: string;
+    roleCode: string;
+    description?: string;
+    status?: number;
+    createdBy: number;
+    updatedBy: number
 }
 
 // 新增角色
