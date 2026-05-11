@@ -1,8 +1,9 @@
 import { Context, Next } from "koa";
-import { serviceAddRole, serviceGetUserInfo } from "../service/system.service";
+import { serviceAddRole, serviceGetRoles, serviceGetUserInfo } from "../service/system.service";
 import { responseFail, responseSuccess } from "../utils/response";
 import { UserRequestBody } from "./auth.controller";
 
+// 获取用户信息
 export async function getUserInfo(ctx: Context, next: Next) {
     const user = (await serviceGetUserInfo(ctx)) as UserRequestBody
     if (user.id) {
@@ -12,6 +13,7 @@ export async function getUserInfo(ctx: Context, next: Next) {
     }
 }
 
+// 新增角色
 export interface RoleBody {
     id?:number,
     roleName: string;
@@ -21,8 +23,6 @@ export interface RoleBody {
     createdBy: number;
     updatedBy: number
 }
-
-// 新增角色
 export async function addRole(ctx: Context, next: Next) {
     const { roleName, roleCode } = ctx.request.body as RoleBody
     if(!roleName){
@@ -33,5 +33,21 @@ export async function addRole(ctx: Context, next: Next) {
         const res = await serviceAddRole(ctx)
         if(res.id)
         responseSuccess(ctx, null, '操作成功！')
+    }
+}
+
+// 获取角色
+export interface RoleSearch {
+    page: number,
+    pageSize: number,
+    roleName?: string
+}
+export async function getRoles(ctx: Context, next: Next) {
+    const { page, pageSize } = ctx.request.query
+    if(!page || !pageSize){
+        responseFail(ctx, '分页，页码必填', 400)
+    }  else {
+        const { total, records } = await serviceGetRoles(ctx)
+        responseSuccess(ctx, {total, records}, '操作成功！')
     }
 }

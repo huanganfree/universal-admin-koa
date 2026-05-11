@@ -3,5 +3,5 @@ import { initRole } from './system/role'
 
 export {
     initUser,
-    initRole
+    initRole   
 }

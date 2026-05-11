@@ -19,7 +19,21 @@ export async function serviceAddRole(ctx: Context) {
     const roleIn = await Role.create({ roleName, roleCode,status, description, createdBy: userId, updatedBy: userId });
     console.log('roleIn.toJSON()=', roleIn.toJSON());
     return roleIn.toJSON() as RoleBody
-    
 }
 
 // 获取角色列表
+export async function serviceGetRoles(ctx: Context) {
+    const { page = 1, pageSize = 10, roleName = '' } = ctx.request.query
+    console.log('ctx.request.query===', ctx.request.query);
+    
+    const {count, rows} = await Role.findAndCountAll({ offset: +page, limit: +pageSize, where:roleName ? {roleName} : {} });
+    return {
+        total: count,
+        records: rows
+    }
+
+    // const data = await Role.findAll();
+    // console.log('data=', data.toJSON());
+    // return data
+    
+}
