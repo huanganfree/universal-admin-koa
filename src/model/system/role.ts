@@ -1,18 +1,18 @@
 import { CreationOptional, DataTypes, InferAttributes, InferCreationAttributes, Model, Sequelize } from 'sequelize';
 
- interface UserModel extends Model<InferAttributes<UserModel>, InferCreationAttributes<UserModel>> {
+ interface ModelType extends Model<InferAttributes<ModelType>, InferCreationAttributes<ModelType>> {
     id: CreationOptional<number>;
-    roleName: string;
-    roleCode: string;
+    roleName: CreationOptional<string>;
+    roleCode: CreationOptional<string>;
     description: CreationOptional<string>;
     status: CreationOptional<number>;
-    createdBy: number;
-    updatedBy: number
+    createdBy: CreationOptional<number>;
+    updatedBy: CreationOptional<number>
 }
 
 function initRole(sequelize: Sequelize) {
     
-    const role = sequelize.define<UserModel>(
+    const role = sequelize.define<ModelType>(
         'Role',
         {
             id: {
@@ -28,7 +28,7 @@ function initRole(sequelize: Sequelize) {
             roleCode: {
                 type: DataTypes.STRING,
                 allowNull: false,
-                comment: '角色标识'
+                comment: '角色标识',
             },
             description: {
                 type: DataTypes.STRING,

@@ -1,5 +1,5 @@
 import { Sequelize } from 'sequelize';
-import { initRole, initUser } from '../model';
+import { initDict, initDictItem, initRole, initUser } from '../model';
 
 function requireEnv(name: string): string {
   const value = process.env[name];
@@ -10,15 +10,19 @@ function requireEnv(name: string): string {
 const sequelize = new Sequelize(requireEnv('DB_NAME'), requireEnv('DB_USER'), requireEnv('DB_PASSWORD'), {
   host: 'localhost',
   dialect: 'mysql',
-  timezone: '+08:00' // 使用北京时间
+  timezone: '+08:00'
 });
 
 const User = initUser(sequelize)
 const Role = initRole(sequelize)
+const SysDict = initDict(sequelize)
+const SysDictItem = initDictItem(sequelize)
 
 
 export {
   sequelize,
   User,
-  Role
+  Role,
+  SysDict,
+  SysDictItem
 }

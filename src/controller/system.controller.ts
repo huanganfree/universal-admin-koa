@@ -1,5 +1,5 @@
 import { Context, Next } from "koa";
-import { serviceAddRole, serviceDeleteRoles, serviceEditRoles, serviceGetRoles, serviceGetUserInfo } from "../service/system.service";
+import { serviceAddRole, serviceDeleteRoles, serviceEditRoles, serviceGetDictItem, serviceGetRoles, serviceGetUserInfo, serviceUpdateRoleStatus } from "../service/system.service";
 import { responseFail, responseSuccess } from "../utils/response";
 import { UserRequestBody } from "./auth.controller";
 
@@ -12,6 +12,18 @@ export async function getUserInfo(ctx: Context, next: Next) {
         responseFail(ctx, '该用户不存在', 400)
     }
 }
+
+// 获取字典选项
+export async function getDictItem(ctx: Context, next: Next) {
+    const { dictCode } = ctx.request.query || {}
+    if (dictCode) {
+        const res = await serviceGetDictItem(dictCode as string)
+        responseSuccess(ctx, res)
+    } else {
+        responseFail(ctx, '字典编码未传', 400)
+    }
+}
+
 
 // 新增角色
 export interface RoleBody {
@@ -77,5 +89,22 @@ export async function editRoles(ctx: Context, next: Next) {
     } else {
         await serviceEditRoles(editData)
         responseSuccess(ctx, null)
+    }
+}
+
+export async function updateRoleStatus(ctx: Context, next: Next) {
+    const { id } = ctx.params;
+    const data = ctx.request.body as { status: number }
+    if (!id || id == "null") {
+        responseFail(ctx, 'id不能为空', 400)
+    } else if (data.status === undefined) {
+        responseFail(ctx, 'status不能为空', 400)
+    } else {
+        const res = await serviceUpdateRoleStatus(id, data)
+        if (res[0] <= 0) {
+            responseFail(ctx, '未找到记录', 400)
+        } else {
+            responseSuccess(ctx, null)
+        }
     }
 }

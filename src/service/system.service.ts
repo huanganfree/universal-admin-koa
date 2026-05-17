@@ -2,7 +2,7 @@
  * 处理业务逻辑，调用数据库
  */
 import { Context } from "koa";
-import { Role, User } from "../db";
+import { Role, User, SysDictItem } from "../db";
 import { EditRole, RoleBody } from "../controller/system.controller";
 import { Op } from "sequelize";
 
@@ -11,6 +11,12 @@ export async function serviceGetUserInfo(ctx: Context) {
     const { userId } = ctx.state.user
     const user = await User.findOne({ where: { id: userId } })
     return user?.toJSON()
+}
+
+// 获取字典
+export async function serviceGetDictItem(dictCode: string) {
+    const res = await SysDictItem.findAll({ where: { dict_code: dictCode } })
+    return res
 }
 
 // 新增角色
@@ -51,4 +57,9 @@ export async function serviceDeleteRoles(ids: any[]) {
 // 编辑角色
 export async function serviceEditRoles(params: EditRole) {
     await Role.update({ ...params }, { where: { id: params.id } })
+}
+
+// 角色状态
+export async function serviceUpdateRoleStatus(id: number, {status}: {status: any}) {
+    return await Role.update({ status }, { where: { id } })
 }
