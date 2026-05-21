@@ -27,7 +27,7 @@ function initDict(sequelize: Sequelize) {
                 type: DataTypes.STRING,
                 allowNull: false,
                 comment: '字典编码',
-                unique: true,
+                unique: 'dict_code',
             },
             description: {
                 type: DataTypes.STRING,

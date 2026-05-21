@@ -44,7 +44,6 @@ function initRole(sequelize: Sequelize) {
             createdBy: {
                 type: DataTypes.BIGINT,
                 allowNull: true,
-
             },
             updatedBy: {
                 type: DataTypes.BIGINT,

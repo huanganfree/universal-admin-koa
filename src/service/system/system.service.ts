@@ -2,9 +2,9 @@
  * 处理业务逻辑，调用数据库
  */
 import { Context } from "koa";
-import { Role, User, SysDictItem } from "../db";
-import { EditRole, RoleBody } from "../controller/system.controller";
-import { Op } from "sequelize";
+import { Role, User, SysDictItem } from "../../db";
+import { EditRole, RoleBody } from "../../controller/system/system.controller";
+import { Op, Sequelize } from "sequelize";
 
 // 获取用户信息
 export async function serviceGetUserInfo(ctx: Context) {
@@ -39,7 +39,16 @@ export async function serviceGetRoles(ctx: Context) {
         offset: (+page - 1) * (+pageSize),
         limit: +pageSize,
         where: roleName ? { roleName: { [Op.like]: `%${roleName}%` } } : {}, // 模糊查询
-        order: [['createdAt', 'DESC']]
+        order: [['createdAt', 'DESC']],
+        attributes: [
+            [Sequelize.literal("DATE_FORMAT(updatedAt, '%Y-%m-%d %H:%i:%s')"), 'updatedAt'],
+            [Sequelize.literal("DATE_FORMAT(createdAt, '%Y-%m-%d %H:%i:%s')"), 'createdAt'],
+            'roleName',
+            'roleCode',
+            'description',
+            'status',
+            'id'
+        ]
     })
     return {
         total: count,

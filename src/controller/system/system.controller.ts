@@ -1,7 +1,7 @@
 import { Context, Next } from "koa";
-import { serviceAddRole, serviceDeleteRoles, serviceEditRoles, serviceGetDictItem, serviceGetRoles, serviceGetUserInfo, serviceUpdateRoleStatus } from "../service/system.service";
-import { responseFail, responseSuccess } from "../utils/response";
-import { UserRequestBody } from "./auth.controller";
+import { serviceAddRole, serviceDeleteRoles, serviceEditRoles, serviceGetDictItem, serviceGetRoles, serviceGetUserInfo, serviceUpdateRoleStatus } from "../../service/system/system.service";
+import { responseFail, responseSuccess } from "../../utils/response";
+import { UserRequestBody } from "../auth.controller";
 
 // 获取用户信息
 export async function getUserInfo(ctx: Context, next: Next) {
