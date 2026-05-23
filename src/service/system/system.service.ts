@@ -34,11 +34,13 @@ export async function serviceAddRole(ctx: Context) {
  * @returns 
  */
 export async function serviceGetRoles(ctx: Context) {
-    const { page = 1, pageSize = 10, roleName = '' } = ctx.request.query
+    const { page = 1, pageSize = 10, roleName: roleNameQuery = '', status = '' , ...leftParams } = ctx.request.query
+    const roleName = (typeof roleNameQuery === 'string' ? roleNameQuery : roleNameQuery[0] ?? '').trim();
+    const statusCondition = status !== undefined && status !== '' ? { status } : {}
     const { count, rows } = await Role.findAndCountAll({
         offset: (+page - 1) * (+pageSize),
         limit: +pageSize,
-        where: roleName ? { roleName: { [Op.like]: `%${roleName}%` } } : {}, // 模糊查询
+        where: { roleName: { [Op.like]: `%${roleName}%` }, ...statusCondition, ...leftParams }, // 模糊查询
         order: [['createdAt', 'DESC']],
         attributes: [
             [Sequelize.literal("DATE_FORMAT(updatedAt, '%Y-%m-%d %H:%i:%s')"), 'updatedAt'],

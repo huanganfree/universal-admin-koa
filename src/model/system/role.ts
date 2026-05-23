@@ -1,6 +1,6 @@
 import { CreationOptional, DataTypes, InferAttributes, InferCreationAttributes, Model, Sequelize } from 'sequelize';
 
- interface ModelType extends Model<InferAttributes<ModelType>, InferCreationAttributes<ModelType>> {
+interface ModelType extends Model<InferAttributes<ModelType>, InferCreationAttributes<ModelType>> {
     id: CreationOptional<number>;
     roleName: CreationOptional<string>;
     roleCode: CreationOptional<string>;
@@ -11,7 +11,7 @@ import { CreationOptional, DataTypes, InferAttributes, InferCreationAttributes, 
 }
 
 function initRole(sequelize: Sequelize) {
-    
+
     const role = sequelize.define<ModelType>(
         'Role',
         {
@@ -55,6 +55,7 @@ function initRole(sequelize: Sequelize) {
             paranoid: true
         },
     )
+    
     return role
 }
 

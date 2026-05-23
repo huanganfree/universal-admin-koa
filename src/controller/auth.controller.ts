@@ -5,6 +5,8 @@ import { Context, Next } from "koa";
 import { responseFail, responseSuccess } from "../utils/response";
 import { serviceLogin } from "../service/auth.service";
 import JWT from 'jsonwebtoken';
+import { User } from "../db";
+import dayjs from "dayjs";
 
 export interface UserRequestBody {
   username?: string;
@@ -17,13 +19,19 @@ export async function login(ctx: Context, next: Next) {
   if (body.username) {
     const user = await serviceLogin(body)
     if (user) {
-      const dbPassword = user.getDataValue('password') as string
+      const userObj = user.toJSON()
+      if(!userObj.status){
+        responseFail(ctx, '该用户被禁用！', 400)
+        return
+      }
+      const dbPassword = userObj.password
       if (dbPassword === body.password) {
         const token = JWT.sign(
-          { userId: user.getDataValue('id'), username: body.username },
+          { userId: userObj.id, username: body.username },
           process.env.JWT_SECRET as string,
           {expiresIn: '2d'}
         )
+        await User.update({ lastLoginTime: dayjs().format('YYYY-MM-DD HH:mm:ss') }, { where: { id: userObj.id } })
         responseSuccess(ctx, token, '登录成功')
         next()
       } else {

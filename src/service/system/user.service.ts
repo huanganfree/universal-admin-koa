@@ -11,10 +11,26 @@ export async function serviceGetUsers(ctx: Context) {
         offset: (+page - 1) * (+pageSize),
         limit: +pageSize,
         where: username ? { username: { [Op.like]: `%${username}%` } } : {}, // 模糊查询
-        order: [['createdAt', 'DESC']]
+        order: [['createdAt', 'DESC']],
+        include: [{
+            model: Role,
+            attributes: ['roleName', 'roleCode']
+        }]
     })
+
+    const transformRows = rows.map((el: any) => {
+        const item = el.toJSON()
+        if(item.Role){
+            item.roleName = item.Role.roleName;
+            item.roleCode = item.Role.roleCode;
+        }
+        delete item.Role
+        return item
+    })
+    console.log(transformRows);
+    
     return {
         total: count,
-        records: rows
+        records: transformRows
     }
 }
