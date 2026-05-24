@@ -40,7 +40,7 @@ export async function serviceGetRoles(ctx: Context) {
     const { count, rows } = await Role.findAndCountAll({
         offset: (+page - 1) * (+pageSize),
         limit: +pageSize,
-        where: { roleName: { [Op.like]: `%${roleName}%` }, ...statusCondition, ...leftParams }, // 模糊查询
+        where: { roleName: { [Op.like]: `%${roleName}%` }, ...statusCondition, ...leftParams },
         order: [['createdAt', 'DESC']],
         attributes: [
             [Sequelize.literal("DATE_FORMAT(updatedAt, '%Y-%m-%d %H:%i:%s')"), 'updatedAt'],

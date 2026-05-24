@@ -18,7 +18,8 @@ function initUser(sequelize: Sequelize) {
             password: {
                 type: DataTypes.STRING,
                 allowNull: false,
-                comment: '加密密码'
+                comment: '加密密码',
+                defaultValue: '123456'
             },
             roleId: {
                 type: DataTypes.BIGINT,
@@ -31,13 +32,13 @@ function initUser(sequelize: Sequelize) {
             },
             status: {
                 type: DataTypes.TINYINT,
-                allowNull: true,
+                allowNull: false,
                 comment: '禁用状态, 1启用 0禁用',
                 defaultValue: 0
             },
             nickname: {
                 type: DataTypes.STRING,
-                allowNull: true,
+                allowNull: false,
             },
             lastLoginTime: {
                 type: DataTypes.DATE,

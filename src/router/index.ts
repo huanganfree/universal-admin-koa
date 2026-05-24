@@ -1,6 +1,6 @@
 import Koa from 'koa';
 import AuthRouter from './auth';
-import SystemRouter from './system/system';
+import SystemRouter from './system/systemRouter';
 import UserRouter from './system/userRouter';
 
 export function mountRouters(app: Koa) {
