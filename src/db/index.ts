@@ -1,5 +1,5 @@
 import { Sequelize } from 'sequelize';
-import { initDict, initDictItem, initRole, initUser } from '../model';
+import { initDict, initDictItem, initRole, initUser, initContent } from '../model';
 
 function requireEnv(name: string): string {
   const value = process.env[name];
@@ -17,6 +17,7 @@ const User = initUser(sequelize)
 const Role = initRole(sequelize)
 const SysDict = initDict(sequelize)
 const SysDictItem = initDictItem(sequelize)
+const Content = initContent(sequelize)
 
 // 2. 集中配置关联关系（核心解决核心问题）
 User.belongsTo(Role, { foreignKey: 'roleId' });
@@ -27,5 +28,6 @@ export {
   User,
   Role,
   SysDict,
-  SysDictItem
+  SysDictItem,
+  Content
 }

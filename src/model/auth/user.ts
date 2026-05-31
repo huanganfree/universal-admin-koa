@@ -15,6 +15,13 @@ function initUser(sequelize: Sequelize) {
                 type: DataTypes.STRING,
                 allowNull: false,
             },
+            phone: {
+                type: DataTypes.STRING,
+                allowNull: false,
+                comment: '手机号',
+                defaultValue: '',
+                unique: 'phone'
+            },
             password: {
                 type: DataTypes.STRING,
                 allowNull: false,

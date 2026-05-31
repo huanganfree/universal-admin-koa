@@ -9,13 +9,18 @@
   "license": "MIT",
   "dependencies": {
     "@koa/bodyparser": "^6.1.0",
+    "@koa/multer": "^4.0.0",
     "@koa/router": "^15.4.0",
     "@types/jsonwebtoken": "^9.0.10",
+    "@types/multer": "^2.1.0",
     "dayjs": "^1.11.20",
     "dotenv": "^17.4.2",
     "jsonwebtoken": "^9.0.3",
     "koa": "^3.2.0",
     "koa-jwt": "^4.0.4",
+    "koa-mount": "^4.2.0",
+    "koa-static": "^5.0.0",
+    "multer": "^2.1.1",
     "mysql2": "^3.22.2",
     "sequelize": "^6.37.8"
   },

@@ -1,6 +1,8 @@
 import Koa from 'koa';
 import { bodyParser } from '@koa/bodyparser';
 import jwt from 'koa-jwt';
+import serve from 'koa-static';
+import mount from 'koa-mount';
 
 import dotenv from 'dotenv';
 dotenv.config({ path: `.env.${process.env.NODE_ENV}` })
@@ -8,14 +10,18 @@ dotenv.config({ path: `.env.${process.env.NODE_ENV}` })
 import { sequelize } from './db';
 import { mountRouters } from './router/index';
 import { errorMiddleware } from './middleware/error.middleware';
+import path from 'node:path';
 
 console.log('当前环境==', process.env.DB_HOST)
 
 const app = new Koa();
 
+app.use(mount('/uploads', serve(path.join(__dirname, '../uploads'))));
+
+app.use(jwt({ secret: process.env.JWT_SECRET! }).unless({ path: [/^\/api\/auth\/login$/, /^\/uploads/] }));// 跳过登录
+
 app.use(errorMiddleware);
 
-app.use(jwt({ secret: process.env.JWT_SECRET! }).unless({ path: [/^\/api\/auth\/login$/] }));// 跳过登录
 
 app.use(bodyParser({
   parsedMethods: ['DELETE','POST', 'PUT', 'PATCH']
