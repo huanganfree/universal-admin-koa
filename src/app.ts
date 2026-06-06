@@ -16,15 +16,23 @@ console.log('当前环境==', process.env.DB_HOST)
 
 const app = new Koa();
 
+// 1. 必须放在第一位！一进门就拦截
+app.use(async (ctx, next) => {
+  if (ctx.path === '/favicon.ico') {
+    ctx.status = 204;
+    return;
+  }
+  await next();
+});
+
 app.use(mount('/uploads', serve(path.join(__dirname, '../uploads'))));
 
 app.use(jwt({ secret: process.env.JWT_SECRET! }).unless({ path: [/^\/api\/auth\/login$/, /^\/uploads/] }));// 跳过登录
 
 app.use(errorMiddleware);
 
-
 app.use(bodyParser({
-  parsedMethods: ['DELETE','POST', 'PUT', 'PATCH']
+  parsedMethods: ['DELETE', 'POST', 'PUT', 'PATCH']
 }));
 
 mountRouters(app)

@@ -19,9 +19,9 @@ const SysDict = initDict(sequelize)
 const SysDictItem = initDictItem(sequelize)
 const Content = initContent(sequelize)
 
-// 2. 集中配置关联关系（核心解决核心问题）
+// 2. 集中配置关联关系
 User.belongsTo(Role, { foreignKey: 'roleId' });
-Role.hasMany(User, { foreignKey: 'roleId' });
+// Role.hasMany(User, { foreignKey: 'roleId' });
 
 export {
   sequelize,

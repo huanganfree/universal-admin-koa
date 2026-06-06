@@ -41,7 +41,10 @@ function initUser(sequelize: Sequelize) {
                 type: DataTypes.TINYINT,
                 allowNull: false,
                 comment: '禁用状态, 1启用 0禁用',
-                defaultValue: 0
+                defaultValue: 0,
+                get() {
+                    return !!(this.getDataValue('status'))
+                },
             },
             nickname: {
                 type: DataTypes.STRING,

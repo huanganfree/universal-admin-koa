@@ -1,5 +1,5 @@
 import Router from '@koa/router';
-import { uploadFile } from '../../controller/content/content.controller';
+import { createContent, getContents, uploadFile } from '../../controller/content/content.controller';
 import multer from '@koa/multer';
 import path from 'node:path';
 import dayjs from 'dayjs';
@@ -20,9 +20,11 @@ const storage = multer.diskStorage({
 });
 
 const upload = multer({ storage });
-// 文件上传
+
 contentRouter.post('/upload', upload.single('file'), uploadFile)
 
+contentRouter.post('/create', createContent)
 
+contentRouter.get('/contents/search', getContents)
 
 export default contentRouter

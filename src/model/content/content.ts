@@ -16,15 +16,19 @@ function initContent(sequelize: Sequelize) {
                 allowNull: false,
             },
             tags: {
-                type: DataTypes.STRING,
+                type: DataTypes.JSON,
                 allowNull: false,
-                defaultValue: '',
             },
             cover: {
-                type: DataTypes.STRING,
+                type: DataTypes.JSON,
                 allowNull: false,
                 comment: '封面图',
-                defaultValue: ''
+            },
+            status: {
+                type: DataTypes.ENUM('draft', 'pending', 'published', 'offline'),
+                allowNull: false,
+                comment: '状态',
+                defaultValue: 'draft'
             },
             content: {
                 type: DataTypes.TEXT('long'),
@@ -40,6 +44,20 @@ function initContent(sequelize: Sequelize) {
                 type: DataTypes.BIGINT,
                 allowNull: true,
                 comment: '修改人'
+            },
+            createdAt: {
+                type: DataTypes.DATE,
+                get() {
+                    const raw = this.getDataValue('createdAt');
+                    return raw ? dayjs(raw).format('YYYY-MM-DD HH:mm:ss') : null;
+                }
+            },
+            updatedAt: {
+                type: DataTypes.DATE,
+                get() {
+                    const raw = this.getDataValue('createdAt');
+                    return raw ? dayjs(raw).format('YYYY-MM-DD HH:mm:ss') : null;
+                }
             }
         },
         {
