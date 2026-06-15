@@ -1,6 +1,6 @@
 import { Context, Next } from "koa";
 import { responseFail, responseSuccess } from "../../utils/response";
-import { serviceCreateContent, serviceGetContents } from "../../service/content/content.service";
+import { serviceCreateContent, serviceGetContents, serviceGetPendingContents, serviceUpdateContentStatus } from "../../service/content/content.service";
 
 export async function uploadFile(ctx: Context, next: Next) {
     if(!ctx.is('multipart/*')){
@@ -15,23 +15,66 @@ export async function uploadFile(ctx: Context, next: Next) {
     })
 }
 
-export async function createContent(ctx: Context, next: Next) {
+export async function createContent(ctx: Context) {
     const { userId } = ctx.state.user
     const { cover, title, content, tags } = ctx.request.body as {[key: string]: any}
     if(!tags || !cover || !title || !content){
         responseFail(ctx, '是必填项！')
         return
     }
-    const res = serviceCreateContent({ tags, cover, title, content, userId })
+    const res = await serviceCreateContent({ tags, cover, title, content, userId })
     responseSuccess(ctx, null)
 }
 
-export async function getContents(ctx: Context, next: Next) {
-    const { page, pageSize, title = '', tags = '' } =  ctx.request.query
+export async function getContents(ctx: Context) {
+    const { page, pageSize, title = '', tags = '', ...leftProps } =  ctx.request.query
     if (!page || !pageSize) {
         responseFail(ctx, '分页，页码必填', 400)
     } else {
-        const { total, records } = await serviceGetContents({ page, pageSize, title, tags })
+        const { total, records } = await serviceGetContents({ page, pageSize, title, tags, ...leftProps })
         responseSuccess(ctx, { total, records }, '操作成功！')
+    }
+}
+
+export async function getPendingContents(ctx: Context) {
+    const { page, pageSize, title = '', tags = '', ...leftProps } =  ctx.request.query
+    if (!page || !pageSize) {
+        responseFail(ctx, '分页，页码必填', 400)
+    } else {
+        const { total, records } = await serviceGetPendingContents({ page, pageSize, title, tags, ...leftProps })
+        responseSuccess(ctx, { total, records }, '操作成功！')
+    }
+}
+
+// 提交审核
+export async function submitContent(ctx: Context){
+    const { id } = ctx.params;
+    if(!id){
+        responseFail(ctx, 'id必传', 400)
+    } else {
+        await serviceUpdateContentStatus({ id, status: 'pending' })
+        responseSuccess(ctx, null, '提交审核成功！')
+    }
+}
+
+// 审核通过
+export async function approveContent(ctx: Context){
+    const { id } = ctx.params;
+    if(!id){
+        responseFail(ctx, 'id必传', 400)
+    } else {
+        await serviceUpdateContentStatus({ id, status: 'published' })
+        responseSuccess(ctx, null, '审核通过成功！')
+    }
+}
+
+export async function rejectContent(ctx: Context){
+    const { id } = ctx.params;
+    const { remark = ''} = ctx.request.body as {[key: string]: any}
+    if(!id || !remark){
+        responseFail(ctx, 'id和remark都是必传', 400)
+    } else {
+        await serviceUpdateContentStatus({ id, status: 'draft', remark })
+        responseSuccess(ctx, null, '驳回成功！')
     }
 }

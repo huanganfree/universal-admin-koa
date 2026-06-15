@@ -6,7 +6,7 @@ function initUser(sequelize: Sequelize) {
         'User',
         {
             id: {
-                type: DataTypes.BIGINT,
+                type: DataTypes.INET,
                 allowNull: false,
                 autoIncrement: true,
                 primaryKey: true,

@@ -21,7 +21,7 @@ export async function login(ctx: Context, next: Next) {
     if (user) {
       const {password, ...leftProps} = user.toJSON()
       if(!leftProps.status){
-        responseFail(ctx, '该用户被禁用！', 400)
+        responseFail(ctx, '账号已被禁用！', 400)
         return
       }
       const dbPassword = password

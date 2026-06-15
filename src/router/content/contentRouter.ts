@@ -1,5 +1,5 @@
 import Router from '@koa/router';
-import { createContent, getContents, uploadFile } from '../../controller/content/content.controller';
+import { approveContent, createContent, getContents, getPendingContents, rejectContent, submitContent, uploadFile } from '../../controller/content/content.controller';
 import multer from '@koa/multer';
 import path from 'node:path';
 import dayjs from 'dayjs';
@@ -26,5 +26,13 @@ contentRouter.post('/upload', upload.single('file'), uploadFile)
 contentRouter.post('/create', createContent)
 
 contentRouter.get('/contents/search', getContents)
+
+contentRouter.get('/pendingContents/search', getPendingContents)
+
+contentRouter.put('/content/:id/submit', submitContent)
+
+contentRouter.put('/content/:id/approve', approveContent)
+
+contentRouter.put('/content/:id/reject', rejectContent)
 
 export default contentRouter

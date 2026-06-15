@@ -21,8 +21,9 @@ function initContent(sequelize: Sequelize) {
             },
             cover: {
                 type: DataTypes.JSON,
-                allowNull: false,
+                allowNull: true,
                 comment: '封面图',
+                defaultValue: ''
             },
             status: {
                 type: DataTypes.ENUM('draft', 'pending', 'published', 'offline'),
@@ -35,15 +36,28 @@ function initContent(sequelize: Sequelize) {
                 allowNull: false,
                 comment: '内容',
             },
-            createdBy: {
-                type: DataTypes.BIGINT,
+            reviewRemark: {
+                type: DataTypes.STRING,
                 allowNull: true,
-                comment: '创建人'
+                comment: '备注',
+            },
+            createdBy: {
+                type: DataTypes.INET,
+                allowNull: false,
+                comment: '创建人',
+                references: {
+                    model: 'user',
+                    key: 'id'
+                }
             },
             updatedBy: {
-                type: DataTypes.BIGINT,
-                allowNull: true,
-                comment: '修改人'
+                type: DataTypes.INET,
+                allowNull: false,
+                comment: '修改人',
+                references: {
+                    model: 'user',
+                    key: 'id'
+                }
             },
             createdAt: {
                 type: DataTypes.DATE,
@@ -64,6 +78,7 @@ function initContent(sequelize: Sequelize) {
             // freezeTableName: true,
             tableName: 'content',
             underscored: true,
+            paranoid: true,
         },
     )
     return content
