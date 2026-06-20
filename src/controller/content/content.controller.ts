@@ -1,6 +1,6 @@
 import { Context, Next } from "koa";
 import { responseFail, responseSuccess } from "../../utils/response";
-import { serviceCreateContent, serviceGetContents, serviceGetPendingContents, serviceUpdateContentStatus } from "../../service/content/content.service";
+import { serviceCreateContent, serviceDeleteContent, serviceGetContents, serviceGetPendingContents, serviceUpdateContentStatus } from "../../service/content/content.service";
 
 export async function uploadFile(ctx: Context, next: Next) {
     if(!ctx.is('multipart/*')){
@@ -76,5 +76,16 @@ export async function rejectContent(ctx: Context){
     } else {
         await serviceUpdateContentStatus({ id, status: 'draft', remark })
         responseSuccess(ctx, null, '驳回成功！')
+    }
+}
+
+// 暂只支持单个删除
+export async function deleteContent(ctx: Context){
+    const { id } = ctx.request.body as {[key: string]: any};
+    if(!id){
+        responseFail(ctx, 'id必传', 400)
+    } else {
+        await serviceDeleteContent(id)
+        responseSuccess(ctx, null, '删除成功！')
     }
 }

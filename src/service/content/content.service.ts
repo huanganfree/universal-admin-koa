@@ -1,7 +1,6 @@
 import { Content, User } from "../../db"
 import { Op } from "sequelize"
 
-
 export async function serviceCreateContent(params: { [key: string]: any }) {
     const { tags, cover, title, content, userId } = params
     const res = await Content.create({ tags, cover, title, content, createdBy: userId, updatedBy: userId })
@@ -19,7 +18,7 @@ export async function serviceGetContents(params: { [key: string]: any }) {
     const { count, rows } = await Content.findAndCountAll({
         offset: (+page - 1) * (+pageSize),
         limit: +pageSize,
-        where: { title: { [Op.like]: `%${title}%`}, status: {[Op.in]: statusArray}  },
+        where: { title: { [Op.like]: `%${title}%` }, status: { [Op.in]: statusArray } },
         order: [['createdAt', 'DESC']],
         include: [
             {
@@ -46,7 +45,7 @@ export async function serviceGetContents(params: { [key: string]: any }) {
             item.updaterName = item.Updater.username;
             delete item.Updater
         }
-        
+
         return item
     })
 
@@ -62,7 +61,7 @@ export async function serviceGetPendingContents(params: { [key: string]: any }) 
     const { count, rows } = await Content.findAndCountAll({
         offset: (+page - 1) * (+pageSize),
         limit: +pageSize,
-        where: { title: { [Op.like]: `%${title}%`}, status: 'pending' },
+        where: { title: { [Op.like]: `%${title}%` }, status: 'pending' },
         order: [['createdAt', 'DESC']],
         include: [
             {
@@ -89,7 +88,7 @@ export async function serviceGetPendingContents(params: { [key: string]: any }) 
             item.updaterName = item.Updater.username;
             delete item.Updater
         }
-        
+
         return item
     })
 
@@ -97,4 +96,11 @@ export async function serviceGetPendingContents(params: { [key: string]: any }) 
         total: count,
         records: transformRows
     }
+}
+
+// 删除
+export async function serviceDeleteContent(id: string | number) {
+    await Content.destroy({
+        where: { id: id }
+    })
 }
