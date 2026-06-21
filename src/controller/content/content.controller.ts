@@ -1,6 +1,6 @@
 import { Context, Next } from "koa";
 import { responseFail, responseSuccess } from "../../utils/response";
-import { serviceCreateContent, serviceDeleteContent, serviceGetContents, serviceGetPendingContents, serviceUpdateContentStatus } from "../../service/content/content.service";
+import { serviceCreateContent, serviceDeleteContent, serviceGetContents, serviceGetDeletedContents, serviceGetPendingContents, serviceUpdateContentStatus } from "../../service/content/content.service";
 
 export async function uploadFile(ctx: Context, next: Next) {
     if(!ctx.is('multipart/*')){
@@ -17,12 +17,12 @@ export async function uploadFile(ctx: Context, next: Next) {
 
 export async function createContent(ctx: Context) {
     const { userId } = ctx.state.user
-    const { cover, title, content, tags } = ctx.request.body as {[key: string]: any}
+    const { cover, title, content, tags, ...leftProps } = ctx.request.body as {[key: string]: any}
     if(!tags || !cover || !title || !content){
         responseFail(ctx, '是必填项！')
         return
     }
-    const res = await serviceCreateContent({ tags, cover, title, content, userId })
+    const res = await serviceCreateContent({ tags, cover, title, content, userId, ...leftProps })
     responseSuccess(ctx, null)
 }
 
@@ -42,6 +42,16 @@ export async function getPendingContents(ctx: Context) {
         responseFail(ctx, '分页，页码必填', 400)
     } else {
         const { total, records } = await serviceGetPendingContents({ page, pageSize, title, tags, ...leftProps })
+        responseSuccess(ctx, { total, records }, '操作成功！')
+    }
+}
+
+export async function getDeletedContents(ctx: Context){
+    const { page, pageSize, title = '', ...leftProps } =  ctx.request.query
+    if (!page || !pageSize) {
+        responseFail(ctx, '分页，页码必填', 400)
+    } else {
+        const { total, records } = await serviceGetDeletedContents({ page, pageSize, title, ...leftProps })
         responseSuccess(ctx, { total, records }, '操作成功！')
     }
 }
@@ -79,13 +89,25 @@ export async function rejectContent(ctx: Context){
     }
 }
 
-// 暂只支持单个删除
-export async function deleteContent(ctx: Context){
-    const { id } = ctx.request.body as {[key: string]: any};
+// 下线内容
+export async function unpublishContent(ctx: Context){
+    const { id } = ctx.params;
+    // const { remark = ''} = ctx.request.body as {[key: string]: any}
     if(!id){
         responseFail(ctx, 'id必传', 400)
     } else {
-        await serviceDeleteContent(id)
+        await serviceUpdateContentStatus({ id, status: 'offline' })
+        responseSuccess(ctx, null, '下线成功！')
+    }
+}
+
+// 删除
+export async function deleteContent(ctx: Context){
+    const ids = (ctx.request.body as any[]) || []
+    if(!ids?.length){
+        responseFail(ctx, 'id必传', 400)
+    } else {
+        await serviceDeleteContent(ids)
         responseSuccess(ctx, null, '删除成功！')
     }
 }

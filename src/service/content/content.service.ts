@@ -2,8 +2,8 @@ import { Content, User } from "../../db"
 import { Op } from "sequelize"
 
 export async function serviceCreateContent(params: { [key: string]: any }) {
-    const { tags, cover, title, content, userId } = params
-    const res = await Content.create({ tags, cover, title, content, createdBy: userId, updatedBy: userId })
+    const { tags, cover, title, content, userId, ...leftProps } = params
+    const res = await Content.create({ tags, cover, title, content, createdBy: userId, updatedBy: userId, ...leftProps })
     return res.toJSON()
 }
 
@@ -98,9 +98,52 @@ export async function serviceGetPendingContents(params: { [key: string]: any }) 
     }
 }
 
+export async function serviceGetDeletedContents(params: { [key: string]: any }){
+    const { page, pageSize, title = '' } = params
+    const { count, rows } = await Content.findAndCountAll({
+        offset: (+page - 1) * (+pageSize),
+        limit: +pageSize,
+        where: { title: { [Op.like]: `%${title}%` }, deletedAt: {[Op.ne]: null} },
+        order: [['deletedAt', 'DESC']],
+        paranoid: false, // 只想查未删除的，必加
+        include: [
+            {
+                model: User,
+                as: 'Creator',
+                attributes: ['username']
+            },
+            {
+                model: User,
+                as: 'Updater',
+                attributes: ['username']
+            }
+        ]
+    })
+
+    const transformRows = rows.map((el: any) => {
+        const item = el.toJSON()
+        if (item.Creator) {
+            item.creatorName = item.Creator.username;
+            delete item.Creator
+        }
+
+        if (item.Updater) {
+            item.updaterName = item.Updater.username;
+            delete item.Updater
+        }
+
+        return item
+    })
+
+    return {
+        total: count,
+        records: transformRows
+    }
+}
+
 // 删除
-export async function serviceDeleteContent(id: string | number) {
+export async function serviceDeleteContent(ids: (string | number)[]) {
     await Content.destroy({
-        where: { id: id }
+        where: { id: {[Op.or]: ids} }
     })
 }
