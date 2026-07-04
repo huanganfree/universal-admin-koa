@@ -147,3 +147,14 @@ export async function serviceDeleteContent(ids: (string | number)[]) {
         where: { id: {[Op.or]: ids} }
     })
 }
+
+export async function serviceGetContentDetail(id: (string | number)) {
+    const content = await Content.findOne({ where: { id } })
+    return content?.toJSON()
+}
+
+// 编辑
+export async function serviceEditContent(id: (string | number)) {
+    const content = await Content.findOne({ where: { id } })
+    return content?.toJSON()
+}

@@ -1,5 +1,5 @@
 import Router from '@koa/router';
-import { approveContent, createContent, deleteContent, getContents, getDeletedContents, getPendingContents, rejectContent, submitContent, unpublishContent, uploadFile } from '../../controller/content/content.controller';
+import { approveContent, createContent, deleteContent, eidtContent, getContentDetail, getContents, getDeletedContents, getPendingContents, rejectContent, submitContent, unpublishContent, uploadFile } from '../../controller/content/content.controller';
 import multer from '@koa/multer';
 import path from 'node:path';
 import dayjs from 'dayjs';
@@ -40,5 +40,9 @@ contentRouter.put('/content/:id/reject', rejectContent)
 contentRouter.put('/content/:id/unpublish', unpublishContent)
 
 contentRouter.delete('/content/delete', deleteContent)
+
+contentRouter.get('/detail/:id', getContentDetail)
+
+contentRouter.put('/:id', eidtContent)
 
 export default contentRouter
