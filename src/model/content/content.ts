@@ -69,7 +69,14 @@ function initContent(sequelize: Sequelize) {
             updatedAt: {
                 type: DataTypes.DATE,
                 get() {
-                    const raw = this.getDataValue('createdAt');
+                    const raw = this.getDataValue('updatedAt');
+                    return raw ? dayjs(raw).format('YYYY-MM-DD HH:mm:ss') : null;
+                }
+            },
+            deletedAt: {
+                type: DataTypes.DATE,
+                get() {
+                    const raw = this.getDataValue('deletedAt');
                     return raw ? dayjs(raw).format('YYYY-MM-DD HH:mm:ss') : null;
                 }
             }

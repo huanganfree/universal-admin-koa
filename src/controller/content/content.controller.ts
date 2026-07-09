@@ -1,6 +1,6 @@
 import { Context, Next } from "koa";
 import { responseFail, responseSuccess } from "../../utils/response";
-import { serviceCreateContent, serviceDeleteContent, serviceEditContent, serviceGetContentDetail, serviceGetContents, serviceGetDeletedContents, serviceGetPendingContents, serviceUpdateContentStatus } from "../../service/content/content.service";
+import { serviceCreateContent, serviceDeleteContent, serviceEditContent, serviceGetContentDetail, serviceGetContents, serviceGetDeletedContents, serviceGetPendingContents, servicePhysicalDeleteContent, serviceRestoreContent, serviceUpdateContentStatus } from "../../service/content/content.service";
 
 export async function uploadFile(ctx: Context, next: Next) {
     if(!ctx.is('multipart/*')){
@@ -22,7 +22,7 @@ export async function createContent(ctx: Context) {
         responseFail(ctx, '是必填项！')
         return
     }
-    const res = await serviceCreateContent({ tags, cover, title, content, userId, ...leftProps })
+    await serviceCreateContent({ tags, cover, title, content, userId, ...leftProps })
     responseSuccess(ctx, null)
 }
 
@@ -103,6 +103,17 @@ export async function unpublishContent(ctx: Context){
     }
 }
 
+export async function restoreContent(ctx: Context){
+    const { id } = ctx.params;
+    if(!id){
+        responseFail(ctx, 'id必传', 400)
+    } else {
+        await serviceRestoreContent({ id, status: 'draft' })
+        responseSuccess(ctx, null)
+    }
+}
+
+
 // 删除内容
 export async function deleteContent(ctx: Context){
     const ids = (ctx.request.body as any[]) || []
@@ -110,6 +121,16 @@ export async function deleteContent(ctx: Context){
         responseFail(ctx, 'id必传', 400)
     } else {
         await serviceDeleteContent(ids)
+        responseSuccess(ctx, null)
+    }
+}
+
+export async function physicalDeleteContent(ctx: Context){
+    const ids = (ctx.request.body as any[]) || []
+    if(!ids?.length){
+        responseFail(ctx, 'id必传', 400)
+    } else {
+        await servicePhysicalDeleteContent(ids)
         responseSuccess(ctx, null)
     }
 }
@@ -126,12 +147,14 @@ export async function getContentDetail(ctx: Context) {
 }
 
 // 编辑
-export async function eidtContent(ctx: Context) {
+export async function editContent(ctx: Context) {
     const { id } = ctx.params;
     if(!id){
         responseFail(ctx, 'id必传', 400)
     } else {
-        await serviceEditContent(id)
+        const { userId } = ctx.state.user
+        const { ...leftProps } = ctx.request.body || {}
+        await serviceEditContent(id, {...leftProps, createdBy: userId, updatedBy: userId})
         responseSuccess(ctx, null)
     }
 }

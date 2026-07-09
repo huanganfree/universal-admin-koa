@@ -1,5 +1,5 @@
 import { Sequelize } from 'sequelize';
-import { initDict, initDictItem, initRole, initUser, initContent } from '../model';
+import { initDict, initDictItem, initRole, initUser, initContent, initMenu } from '../model';
 
 function requireEnv(name: string): string {
   const value = process.env[name];
@@ -18,6 +18,7 @@ const Role = initRole(sequelize)
 const SysDict = initDict(sequelize)
 const SysDictItem = initDictItem(sequelize)
 const Content = initContent(sequelize)
+const MenuModel = initMenu(sequelize)
 
 // 配置关联关系
 User.belongsTo(Role, { foreignKey: 'roleId' });
@@ -31,5 +32,6 @@ export {
   Role,
   SysDict,
   SysDictItem,
-  Content
+  Content,
+  MenuModel
 }

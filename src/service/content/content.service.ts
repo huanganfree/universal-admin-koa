@@ -19,7 +19,7 @@ export async function serviceGetContents(params: { [key: string]: any }) {
         offset: (+page - 1) * (+pageSize),
         limit: +pageSize,
         where: { title: { [Op.like]: `%${title}%` }, status: { [Op.in]: statusArray } },
-        order: [['createdAt', 'DESC']],
+        order: [['updatedAt', 'DESC']],
         include: [
             {
                 model: User,
@@ -62,7 +62,7 @@ export async function serviceGetPendingContents(params: { [key: string]: any }) 
         offset: (+page - 1) * (+pageSize),
         limit: +pageSize,
         where: { title: { [Op.like]: `%${title}%` }, status: 'pending' },
-        order: [['createdAt', 'DESC']],
+        order: [['updatedAt', 'DESC']],
         include: [
             {
                 model: User,
@@ -98,12 +98,12 @@ export async function serviceGetPendingContents(params: { [key: string]: any }) 
     }
 }
 
-export async function serviceGetDeletedContents(params: { [key: string]: any }){
+export async function serviceGetDeletedContents(params: { [key: string]: any }) {
     const { page, pageSize, title = '' } = params
     const { count, rows } = await Content.findAndCountAll({
         offset: (+page - 1) * (+pageSize),
         limit: +pageSize,
-        where: { title: { [Op.like]: `%${title}%` }, deletedAt: {[Op.ne]: null} },
+        where: { title: { [Op.like]: `%${title}%` }, deletedAt: { [Op.ne]: null } },
         order: [['deletedAt', 'DESC']],
         paranoid: false, // 只想查未删除的，必加
         include: [
@@ -141,12 +141,6 @@ export async function serviceGetDeletedContents(params: { [key: string]: any }){
     }
 }
 
-// 删除
-export async function serviceDeleteContent(ids: (string | number)[]) {
-    await Content.destroy({
-        where: { id: {[Op.or]: ids} }
-    })
-}
 
 export async function serviceGetContentDetail(id: (string | number)) {
     const content = await Content.findOne({ where: { id } })
@@ -154,7 +148,29 @@ export async function serviceGetContentDetail(id: (string | number)) {
 }
 
 // 编辑
-export async function serviceEditContent(id: (string | number)) {
-    const content = await Content.findOne({ where: { id } })
-    return content?.toJSON()
+export async function serviceEditContent(id: (string | number), body: any) {
+    await Content.update({ ...body }, { where: { id } })
+    return true
+}
+
+// 恢复
+export async function serviceRestoreContent({ id, status }: { id: any, status: any }) {
+    // 1. ✨ 使用官方的 restore 恢复数据（此方法会自动把 deletedAt 设为 null）
+    await Content.restore({ where: { id } });
+    await Content.update({ status }, { where: { id } })
+    return true
+}
+
+
+// 删除
+export async function serviceDeleteContent(ids: (string | number)[], isForce: boolean = false) {
+    await Content.destroy({
+        where: { id: { [Op.in]: ids } },
+        force: isForce
+    })
+}
+
+// 彻底删除
+export async function servicePhysicalDeleteContent(ids: (string | number)[]) {
+    await serviceDeleteContent(ids, true)
 }
