@@ -41,7 +41,7 @@ mountRouters(app)
 async function bootstrap() {
   await sequelize.authenticate();
   console.log('test === Connection has been established successfully.');
-  await sequelize.sync({ force: false, match: /^koa_news_admin$/, alter: true })
+  // await sequelize.sync({ force: false, match: /^koa_news_admin$/, alter: true })
   app.listen(process.env.PORT);
 
   app.on('error', err => {

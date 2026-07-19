@@ -19,8 +19,6 @@ function initUser(sequelize: Sequelize) {
                 type: DataTypes.STRING,
                 allowNull: false,
                 comment: '手机号',
-                defaultValue: '',
-                unique: 'phone'
             },
             password: {
                 type: DataTypes.STRING,
@@ -58,6 +56,20 @@ function initUser(sequelize: Sequelize) {
                     const rawValue = this.getDataValue('lastLoginTime');
                     return rawValue ? dayjs(rawValue).format('YYYY-MM-DD HH:mm:ss') : null;
                 },
+            },
+            createdAt: {
+                type: DataTypes.DATE,
+                get() {
+                    const raw = this.getDataValue('createdAt');
+                    return raw ? dayjs(raw).format('YYYY-MM-DD HH:mm:ss') : null;
+                }
+            },
+            updatedAt: {
+                type: DataTypes.DATE,
+                get() {
+                    const raw = this.getDataValue('updatedAt');
+                    return raw ? dayjs(raw).format('YYYY-MM-DD HH:mm:ss') : null;
+                }
             }
         },
         {
@@ -65,18 +77,19 @@ function initUser(sequelize: Sequelize) {
             tableName: 'user',
             paranoid: true,
             // underscored: true,
-            // 👈 在这里对自动生成的字段配置 Getter
-            getterMethods: {
-                createdAt() {
-                    const raw = this.getDataValue('createdAt');
-                    return raw ? dayjs(raw).format('YYYY-MM-DD HH:mm:ss') : null;
+            indexes: [
+                {
+                    name: 'uk_username',
+                    unique: true,
+                    fields: ['username']
                 },
-                updatedAt() {
-                    const raw = this.getDataValue('updatedAt');
-                    return raw ? dayjs(raw).format('YYYY-MM-DD HH:mm:ss') : null;
+                {
+                    name: 'uk_phone',
+                    unique: true,
+                    fields: ['phone']
                 }
-            }
-        },
+            ]
+        }
     )
     return user
 }

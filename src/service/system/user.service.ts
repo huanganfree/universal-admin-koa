@@ -29,7 +29,6 @@ export async function serviceGetUsers(ctx: Context) {
         delete item.Role
         return item
     })
-    console.log(transformRows);
     
     return {
         total: count,
@@ -40,8 +39,8 @@ export async function serviceGetUsers(ctx: Context) {
 // 新增角色
 export async function serviceAddUser(ctx: Context) {
     const { userId } = ctx.state.user
-    const { username, nickname, roleId } = ctx.request.body as UserBody
-    const data = await User.create({ username, nickname, roleId, createdBy: userId, updatedBy: userId });
+    const { username, nickname, roleId, phone } = ctx.request.body as UserBody
+    const data = await User.create({ phone, username, nickname, roleId, createdBy: userId, updatedBy: userId });
     return data.toJSON() as UserBody
 }
 

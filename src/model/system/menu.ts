@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 import { CreationOptional, DataTypes, ENUM, InferAttributes, InferCreationAttributes, Model, Sequelize } from 'sequelize';
 
 export interface MenuType extends Model<InferAttributes<MenuType>, InferCreationAttributes<MenuType>> {
@@ -9,7 +10,8 @@ export interface MenuType extends Model<InferAttributes<MenuType>, InferCreation
     path: string | null;
     component: string | null;
     permission: string | null;
-    sort: number
+    sort: number,
+    [key: string]: any
 }
 
 function initMenu(sequelize: Sequelize) {
@@ -25,8 +27,9 @@ function initMenu(sequelize: Sequelize) {
             },
             parentId: {
                 type: DataTypes.BIGINT,
-                allowNull: true,
-                comment: '父级菜单id'
+                allowNull: false,
+                defaultValue: 0,
+                comment: '父级菜单id',
             },
             name: {
                 type: DataTypes.STRING,
@@ -55,15 +58,49 @@ function initMenu(sequelize: Sequelize) {
                 type: DataTypes.STRING,
                 allowNull: true,
             },
-            sort:{
+            sort: {
                 type: DataTypes.BIGINT,
                 allowNull: false,
+            },
+            status: {
+                type: DataTypes.TINYINT,
+                allowNull: true,
+                comment: '禁用状态, 1启用 0禁用',
+                defaultValue: 0
+            },
+            createdAt: {
+                type: DataTypes.DATE,
+                get() {
+                    const raw = this.getDataValue('createdAt');
+                    return raw ? dayjs(raw).format('YYYY-MM-DD HH:mm:ss') : null;
+                }
+            },
+            updatedAt: {
+                type: DataTypes.DATE,
+                get() {
+                    const raw = this.getDataValue('updatedAt');
+                    return raw ? dayjs(raw).format('YYYY-MM-DD HH:mm:ss') : null;
+                }
+            },
+            deletedAt: {
+                type: DataTypes.DATE,
+                get() {
+                    const raw = this.getDataValue('deletedAt');
+                    return raw ? dayjs(raw).format('YYYY-MM-DD HH:mm:ss') : null;
+                }
             }
         },
         {
             tableName: 'menu',
             underscored: true,
             paranoid: true,
+            indexes: [
+                {
+                    name: 'uk_parent_name',
+                    unique: true,
+                    fields: ['parent_id', 'name']   // 联合唯一索引
+                }
+            ]
         },
     )
 

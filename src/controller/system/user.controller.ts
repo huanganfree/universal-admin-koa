@@ -1,6 +1,7 @@
 import { Context, Next } from "koa";
 import { responseFail, responseSuccess } from "../../utils/response";
 import { serviceAddUser, serviceDeleteUsers, serviceEditUsers, serviceGetUsers, serviceUpdateUserStatus } from "../../service/system/user.service";
+import { UniqueConstraintError } from "sequelize";
 
 
 export async function getUsers(ctx: Context, next: Next) {
@@ -15,10 +16,11 @@ export async function getUsers(ctx: Context, next: Next) {
 
 // 新增角色
 export interface UserBody {
-    id?:number;
+    id?: number;
     username: string;
     nickname: string;
     roleId: number;
+    phone: string;
     createdBy: number;
     updatedBy: number
 }
@@ -27,10 +29,20 @@ export async function addUser(ctx: Context, next: Next) {
     const { username, nickname, roleId } = ctx.request.body as UserBody
     if (!username || !nickname || !roleId) {
         responseFail(ctx, '用户名，角色，昵称三个必填', 400)
-    }  else {
-        const res = await serviceAddUser(ctx)
-        if (res.id)
-            responseSuccess(ctx, null, '操作成功！')
+    } else {
+        try {
+            const res = await serviceAddUser(ctx)
+            if (res.id)
+                responseSuccess(ctx, null, '操作成功！')
+        } catch (error) {
+            if(error instanceof UniqueConstraintError){
+                if(error.fields.username){
+                    responseFail(ctx, '已存在相同的用户名，请勿重复创建！', 400);
+                } else if(error.fields.phone){
+                    responseFail(ctx, '已存在相同的手机号，请检查！', 400);
+                }
+            }
+        }
     }
 }
 

@@ -52,7 +52,19 @@ function initRole(sequelize: Sequelize) {
         },
         {
             tableName: 'role',
-            paranoid: true
+            paranoid: true,
+            indexes: [
+                {
+                    name: 'uk_roleName',
+                    fields: ['roleName'],
+                    unique: true
+                },
+                {
+                    name: 'uk_roleCode',
+                    fields: ['roleCode'],
+                    unique: true
+                }
+            ]
         },
     )
     

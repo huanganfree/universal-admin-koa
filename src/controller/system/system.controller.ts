@@ -1,5 +1,5 @@
 import { Context, Next } from "koa";
-import { serviceAddRole, serviceDeleteRoles, serviceEditRoles, serviceGetDictItem, serviceGetRoles, serviceGetUserInfo, serviceUpdateRoleStatus } from "../../service/system/system.service";
+import { serviceAddRole, serviceDeleteRoles, serviceEditRoles, serviceGetDictItem, serviceGetRoleAuth, serviceGetRoles, serviceGetUserInfo, serviceUpdateRoleAuth, serviceUpdateRoleStatus } from "../../service/system/system.service";
 import { responseFail, responseSuccess } from "../../utils/response";
 import { UserRequestBody } from "../auth.controller";
 
@@ -107,4 +107,30 @@ export async function updateRoleStatus(ctx: Context, next: Next) {
             responseSuccess(ctx, null)
         }
     }
+}
+
+/**
+ * 角色权限
+ * @param ctx 
+ * @returns 
+ */
+export async function updateRoleAuth(ctx: Context) {
+    const { menuIds } = ctx.request.body as {menuIds: number[]}
+    const { id } = ctx.params
+    if (!menuIds || !id) {
+        responseFail(ctx, '角色id，菜单id必填项！')
+        return
+    }
+    await serviceUpdateRoleAuth(id, menuIds)
+    responseSuccess(ctx, null, '操作成功！')
+}
+
+export async function getRoleAuth(ctx: Context) {
+    const { id } = ctx.request.query
+    if (!id) {
+        responseFail(ctx, '角色id必填项！')
+        return
+    }
+    const res = await serviceGetRoleAuth(id as string)
+    responseSuccess(ctx, res, '操作成功！')
 }

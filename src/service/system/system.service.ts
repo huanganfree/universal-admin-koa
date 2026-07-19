@@ -2,7 +2,7 @@
  * 处理业务逻辑，调用数据库
  */
 import { Context } from "koa";
-import { Role, User, SysDictItem } from "../../db";
+import { Role, User, SysDictItem, sequelize, RoleMenuModel } from "../../db";
 import { EditRole, RoleBody } from "../../controller/system/system.controller";
 import { Op, Sequelize } from "sequelize";
 
@@ -73,4 +73,25 @@ export async function serviceEditRoles(params: EditRole) {
 // 角色状态
 export async function serviceUpdateRoleStatus(id: number, {status}: {status: any}) {
     return await Role.update({ status }, { where: { id } })
+}
+
+// 角色权限
+export async function serviceUpdateRoleAuth(id: any, menuIds: any[]) {
+    const t = await sequelize.transaction()
+    try {
+        const role = await Role.findByPk(id, { transaction: t });
+        if(role){
+            await (role as any).setMenuModels(menuIds, { transaction: t }); 
+            await t.commit();
+        }
+    } catch (error) {
+        await t.rollback(); // 报错了就把 DELETE 的数据吃回来
+        throw error
+    }
+}
+
+// 获取字典
+export async function serviceGetRoleAuth(id: string) {
+    const res = await RoleMenuModel.findAll({ where: { roleId: id }, attributes: ['menuId'] })
+    return res.map(item => item.menuId)
 }
