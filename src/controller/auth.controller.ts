@@ -3,7 +3,7 @@
  */
 import { Context, Next } from "koa";
 import { responseFail, responseSuccess } from "../utils/response";
-import { serviceLogin, serviceUserInfo } from "../service/auth.service";
+import { serviceLogin, serviceUserInfo, serviceUserMenus } from "../service/auth.service";
 import JWT from 'jsonwebtoken';
 import { User } from "../db";
 import dayjs from "dayjs";
@@ -27,7 +27,7 @@ export async function login(ctx: Context, next: Next) {
       const dbPassword = password
       if (dbPassword === body.password) {
         const token = JWT.sign(
-          { userId: leftProps.id, phone: body.phone },
+          { userId: leftProps.id, phone: body.phone, roleId: leftProps.roleId },
           process.env.JWT_SECRET as string,
           {expiresIn: '2d'}
         )
@@ -55,6 +55,12 @@ export async function userInfo(ctx: Context, next: Next) {
   })
 }
 
-export function logout(ctx: Context, next: Next) {
-
+// 获取用户菜单权限
+export async function getUserMenus(ctx: Context, next: Next) {
+  const { roleId } = ctx.state.user
+  const menuModels = (await serviceUserMenus(roleId) )as {[key: string]: any}
+  responseSuccess(ctx, menuModels)
 }
+
+// export function logout(ctx: Context, next: Next) {
+// }

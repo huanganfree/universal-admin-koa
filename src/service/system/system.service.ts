@@ -75,7 +75,7 @@ export async function serviceUpdateRoleStatus(id: number, {status}: {status: any
     return await Role.update({ status }, { where: { id } })
 }
 
-// 角色权限
+// 角色权限(事务)
 export async function serviceUpdateRoleAuth(id: any, menuIds: any[]) {
     const t = await sequelize.transaction()
     try {
@@ -85,7 +85,7 @@ export async function serviceUpdateRoleAuth(id: any, menuIds: any[]) {
             await t.commit();
         }
     } catch (error) {
-        await t.rollback(); // 报错了就把 DELETE 的数据吃回来
+        await t.rollback(); // 把 DELETE 的数据回滚
         throw error
     }
 }

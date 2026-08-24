@@ -9,8 +9,9 @@ export async function uploadFile(ctx: Context, next: Next) {
     }
     console.log('ctx.file', ctx.file);
     const { originalname, filename } = ctx.file || {}
+    const realName = Buffer.from(originalname, 'latin1').toString('utf8'); // 转码还原正确的中文名
     responseSuccess(ctx, {
-        originalname: originalname,
+        originalname: realName,
         filePath: `http://${process.env.DB_HOST}:${process.env.PORT}/uploads/${filename}`
     })
 }

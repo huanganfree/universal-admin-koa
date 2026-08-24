@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 import { CreationOptional, DataTypes, InferAttributes, InferCreationAttributes, Model, Sequelize } from 'sequelize';
 
 interface ModelType extends Model<InferAttributes<ModelType>, InferCreationAttributes<ModelType>> {
@@ -7,7 +8,9 @@ interface ModelType extends Model<InferAttributes<ModelType>, InferCreationAttri
     description: CreationOptional<string>;
     status: CreationOptional<number>;
     createdBy: CreationOptional<number>;
-    updatedBy: CreationOptional<number>
+    updatedBy: CreationOptional<number>;
+    createdAt: CreationOptional<string>;
+    updatedAt: CreationOptional<string>;
 }
 
 function initRole(sequelize: Sequelize) {
@@ -48,6 +51,20 @@ function initRole(sequelize: Sequelize) {
             updatedBy: {
                 type: DataTypes.BIGINT,
                 allowNull: true,
+            },
+            createdAt: {
+                type: DataTypes.DATE,
+                get() {
+                    const raw = this.getDataValue('createdAt');
+                    return raw ? dayjs(raw).format('YYYY-MM-DD HH:mm:ss') : null;
+                }
+            },
+            updatedAt: {
+                type: DataTypes.DATE,
+                get() {
+                    const raw = this.getDataValue('updatedAt');
+                    return raw ? dayjs(raw).format('YYYY-MM-DD HH:mm:ss') : null;
+                }
             }
         },
         {

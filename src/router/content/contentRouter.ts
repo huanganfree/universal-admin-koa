@@ -13,7 +13,7 @@ const storage = multer.diskStorage({
     },
     // 2. 控制文件叫什么名字（核心优势）
     filename: (req, file, cb) => {
-        const ext = path.extname(file.originalname);
+        const ext = path.extname(file.originalname); // 获取文件扩展名
         const uniqueSuffix = `${dayjs().format('YYYY-MM-DD_HH-mm-ss')}${ext}`;
         cb(null, uniqueSuffix);
     }
