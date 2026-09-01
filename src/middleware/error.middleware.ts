@@ -8,13 +8,15 @@ export async function errorMiddleware(ctx: Context, next: Next) {
     } catch (err: any) {
         console.log('err========', err);
         if (err.status == 401) {
-            ctx.status = 401;
             const errName = err.originalError?.name
             if (errName == 'TokenExpiredError') {
+                // ctx.status = 401;
                 responseFail(ctx, 'token过期', 401);
             } else if (errName == 'JsonWebTokenError') {
+                // ctx.status = 400;
                 responseFail(ctx, '认证失败，请提供有效的 Token', 400);
             } else {
+                // ctx.status = 400;
                 responseFail(ctx, err.message, 400);
             }
             return

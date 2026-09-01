@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "description": "backend server for blog",
   "scripts": {
-    "start:dev": "cross-env NODE_ENV=development nodemon --watch src --watch .env.development --exec ts-node --transpile-only src/app.ts"
+    "start:dev": "cross-env NODE_ENV=development nodemon --watch src --watch .env.development --exec ts-node --transpile-only src/app.ts",
+    "build": "rimraf dist && tsc",
+    "start": "node dist/app.js"
   },
   "author": "ha",
   "license": "MIT",
@@ -13,6 +15,7 @@
     "@koa/router": "^15.4.0",
     "dayjs": "^1.11.20",
     "dotenv": "^17.4.2",
+    "ioredis": "^6.0.0",
     "jsonwebtoken": "^9.0.3",
     "koa": "^3.2.0",
     "koa-jwt": "^4.0.4",
@@ -23,14 +26,15 @@
     "sequelize": "^6.37.8"
   },
   "devDependencies": {
+    "@types/jsonwebtoken": "^9.0.10",
     "@types/koa": "^3.0.2",
     "@types/koa-mount": "^4.0.5",
     "@types/koa-static": "^4.0.4",
-    "@types/node": "^25.6.0",
-    "@types/jsonwebtoken": "^9.0.10",
     "@types/multer": "^2.1.0",
+    "@types/node": "^25.6.0",
     "cross-env": "^10.1.0",
     "nodemon": "^3.1.14",
+    "rimraf": "^6.1.3",
     "ts-node": "^10.9.2",
     "typescript": "^6.0.3"
   }

@@ -16,7 +16,7 @@ console.log('当前环境==', process.env.DB_HOST)
 
 const app = new Koa();
 
-// 1. 必须放在第一位！一进门就拦截
+// 拦截
 app.use(async (ctx, next) => {
   if (ctx.path === '/favicon.ico') {
     ctx.status = 204;
@@ -27,7 +27,7 @@ app.use(async (ctx, next) => {
 
 app.use(mount('/uploads', serve(path.join(__dirname, '../uploads'))));
 
-app.use(jwt({ secret: process.env.JWT_SECRET! }).unless({ path: [/^\/api\/auth\/login$/, /^\/uploads/] }));// 跳过登录
+app.use(jwt({ secret: process.env.JWT_ACCESS_SECRET! }).unless({ path: [/^\/api\/auth\/login$/, /^\/uploads/, /^\/api\/auth\/refresh$/, /^\/api\/auth\/logout$/] }));// 跳过登录
 
 app.use(errorMiddleware);
 
@@ -37,7 +37,7 @@ app.use(bodyParser({
 
 mountRouters(app)
 
-// 你可以在这里进行关联查询，或者执行同步
+// 这里进行关联查询，或者执行同步
 async function bootstrap() {
   await sequelize.authenticate();
   console.log('test === Connection has been established successfully.');

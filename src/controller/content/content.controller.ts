@@ -28,11 +28,12 @@ export async function createContent(ctx: Context) {
 }
 
 export async function getContents(ctx: Context) {
+    const { userId, roleId } = ctx.state.user
     const { page, pageSize, title = '', tags = '', ...leftProps } =  ctx.request.query
     if (!page || !pageSize) {
         responseFail(ctx, '分页，页码必填', 400)
     } else {
-        const { total, records } = await serviceGetContents({ page, pageSize, title, tags, ...leftProps })
+        const { total, records } = await serviceGetContents({ page, pageSize, title, tags, userId, roleId, ...leftProps })
         responseSuccess(ctx, { total, records }, '操作成功！')
     }
 }
@@ -40,10 +41,11 @@ export async function getContents(ctx: Context) {
 // 获取待审核内容分页数据
 export async function getPendingContents(ctx: Context) {
     const { page, pageSize, title = '', ...leftProps } =  ctx.request.query
+    const { userId, roleId } = ctx.state.user
     if (!page || !pageSize) {
         responseFail(ctx, '分页，页码必填', 400)
     } else {
-        const { total, records } = await serviceGetPendingContents({ page, pageSize, title, ...leftProps })
+        const { total, records } = await serviceGetPendingContents({ page, pageSize, title, userId, roleId, ...leftProps })
         responseSuccess(ctx, { total, records }, '操作成功！')
     }
 }
@@ -155,7 +157,7 @@ export async function editContent(ctx: Context) {
     } else {
         const { userId } = ctx.state.user
         const { ...leftProps } = ctx.request.body || {}
-        await serviceEditContent(id, {...leftProps, createdBy: userId, updatedBy: userId})
+        await serviceEditContent(id, {...leftProps, updatedBy: userId})
         responseSuccess(ctx, null)
     }
 }

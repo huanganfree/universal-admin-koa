@@ -14,6 +14,6 @@ export async function serviceUserInfo(userId: string | number) {
 
 // 根据角色查菜单权限
 export async function serviceUserMenus(roleId: string | number) {
-    const menusData = await Role.findByPk(roleId, { include: {model: MenuModel, as: 'menuModels', through: {attributes: []}} })
+    const menusData = await Role.findByPk(roleId, { include: { model: MenuModel, as: 'menuModels', through: {attributes: []}, where: { status: 1} } }) as any
     return menusData?.menuModels ?? [];
 }

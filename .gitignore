@@ -1,6 +1,5 @@
 .DS_Store
 node_modules
-/dist
 *.xmind
 *.zip
 /public/*
@@ -26,4 +25,4 @@ pnpm-debug.log*
 .env.*
 
 # static
-uploads/*
+# uploads/*

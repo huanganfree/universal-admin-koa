@@ -1,0 +1,15 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.initMenu = exports.initContent = exports.initDictItem = exports.initDict = exports.initRole = exports.initUser = void 0;
+const user_1 = require("./auth/user");
+Object.defineProperty(exports, "initUser", { enumerable: true, get: function () { return user_1.initUser; } });
+const dict_1 = require("./system/dict");
+Object.defineProperty(exports, "initDict", { enumerable: true, get: function () { return dict_1.initDict; } });
+const dictItem_1 = require("./system/dictItem");
+Object.defineProperty(exports, "initDictItem", { enumerable: true, get: function () { return dictItem_1.initDictItem; } });
+const role_1 = require("./system/role");
+Object.defineProperty(exports, "initRole", { enumerable: true, get: function () { return role_1.initRole; } });
+const content_1 = require("./content/content");
+Object.defineProperty(exports, "initContent", { enumerable: true, get: function () { return content_1.initContent; } });
+const menu_1 = require("./system/menu");
+Object.defineProperty(exports, "initMenu", { enumerable: true, get: function () { return menu_1.initMenu; } });

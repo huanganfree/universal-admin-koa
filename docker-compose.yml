@@ -1,0 +1,72 @@
+version: '3.8'
+
+services:
+  # ==========================================
+  # 1. MySQL 数据库服务
+  # ==========================================
+  mysql:
+    image: mysql:8.0  # 使用官方 MySQL 8.0 镜像
+    container_name: koa-mysql
+    restart: always
+    ports:
+      - "3306:3306"   # 如果不需要在服务器外部用 Navicat 等工具直连，可以把这行注释掉
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD} # 从 .env.production 读取
+      MYSQL_DATABASE: ${DB_NAME}           # 从 .env.production 读取
+    volumes:
+      - mysql_data:/var/lib/mysql
+      # - ./init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    networks:
+      - koa-network
+
+  # ==========================================
+  # 2. Redis 缓存服务
+  # ==========================================
+  redis:
+    image: redis:7-alpine  # 使用轻量级 Alpine 镜像
+    container_name: koa-redis
+    restart: always
+    ports:
+      - "6379:6379"   # 同理，不需要外部直连可注释
+    command: redis-server --requirepass ${REDIS_PASSWORD} --appendonly yes
+    volumes:
+      - redis_data:/data
+    networks:
+      - koa-network
+
+  # ==========================================
+  # 3. Koa 后端应用服务
+  # ==========================================
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: universal-admin-koa-app
+    restart: always
+    ports:
+      - "8001:8001"
+    depends_on:
+      - mysql
+      - redis
+    # 🌟 核心补全：加载生产环境配置文件
+    env_file:
+      - .env.production
+    volumes:
+      # 将上传目录持久化挂载到宿主机
+      - ./uploads:/universal-admin-koa-app/uploads
+    environment:
+      - NODE_ENV=production
+      - DB_HOST=mysql      # 🌟 覆盖本地 127.0.0.1，指向 Docker 内的网络服务名
+      - REDIS_HOST=redis   # 🌟 覆盖本地 127.0.0.1，指向 Docker 内的网络服务名
+    networks:
+      - koa-network
+
+# 定义全局持久化数据卷
+volumes:
+  mysql_data:
+  redis_data:
+
+# 定义内部私有网络
+networks:
+  koa-network:
+    driver: bridge

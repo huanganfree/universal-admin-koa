@@ -11,6 +11,10 @@ function initUser(sequelize: Sequelize) {
                 autoIncrement: true,
                 primaryKey: true,
             },
+            avatar: {
+                type: DataTypes.STRING(500),
+                allowNull: false,
+            },
             username: {
                 type: DataTypes.STRING,
                 allowNull: false,

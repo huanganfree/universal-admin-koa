@@ -1,4 +1,4 @@
-import { Content, User } from "../../db"
+import { Content, Role, User } from "../../db"
 import { Op } from "sequelize"
 
 export async function serviceCreateContent(params: { [key: string]: any }) {
@@ -13,12 +13,18 @@ export async function serviceUpdateContentStatus(params: { [key: string]: any })
 }
 
 export async function serviceGetContents(params: { [key: string]: any }) {
-    const { page, pageSize, title = '', status = 'draft,published,offline' } = params
+    const { page, pageSize, title = '', status = 'draft,published,offline', userId, roleId } = params
     const statusArray = status.split(',')
+
+    const roleModel = await Role.findByPk(roleId, {attributes: ['roleCode']});
+    const byUserIdWhere: {createdBy?: number} = {};
+    if(roleModel?.roleCode === 'editor'){
+        byUserIdWhere.createdBy = userId
+    }
     const { count, rows } = await Content.findAndCountAll({
         offset: (+page - 1) * (+pageSize),
         limit: +pageSize,
-        where: { title: { [Op.like]: `%${title}%` }, status: { [Op.in]: statusArray } },
+        where: { title: { [Op.like]: `%${title}%` }, status: { [Op.in]: statusArray }, ...byUserIdWhere },
         order: [['updatedAt', 'DESC']],
         include: [
             {
@@ -57,11 +63,18 @@ export async function serviceGetContents(params: { [key: string]: any }) {
 
 // 获取待审核的内容
 export async function serviceGetPendingContents(params: { [key: string]: any }) {
-    const { page, pageSize, title = '', tags = '' } = params
+    const { page, pageSize, title = '', tags = '', userId, roleId } = params
+
+    const roleModel = await Role.findByPk(roleId, {attributes: ['roleCode']});
+    const byUserIdWhere: {createdBy?: number} = {};
+    if(roleModel?.roleCode === 'editor'){
+        byUserIdWhere.createdBy = userId
+    }
+
     const { count, rows } = await Content.findAndCountAll({
         offset: (+page - 1) * (+pageSize),
         limit: +pageSize,
-        where: { title: { [Op.like]: `%${title}%` }, status: 'pending' },
+        where: { title: { [Op.like]: `%${title}%` }, status: 'pending', ...byUserIdWhere },
         order: [['updatedAt', 'DESC']],
         include: [
             {
