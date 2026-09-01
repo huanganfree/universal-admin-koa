@@ -3,7 +3,7 @@ import Redis from 'ioredis';
 const redis = new Redis({
   host: process.env.REDIS_HOST as string,
   port: parseInt(process.env.REDIS_PORT as string),
-  // password: 'your_password',
+  password: process.env.REDIS_PASSWORD as string,
 });
 
 redis.on('connect', () => {
