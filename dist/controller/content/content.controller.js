@@ -26,7 +26,7 @@ async function uploadFile(ctx, next) {
     const realName = Buffer.from(originalname, 'latin1').toString('utf8'); // 转码还原正确的中文名
     (0, response_1.responseSuccess)(ctx, {
         originalname: realName,
-        filePath: `http://${process.env.DB_HOST}:${process.env.PORT}/uploads/${filename}`
+        filePath: `http://${process.env.ADMIN_HOST}:${process.env.PORT}/uploads/${filename}`
     });
 }
 async function createContent(ctx) {
