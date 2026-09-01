@@ -12,7 +12,7 @@ export async function uploadFile(ctx: Context, next: Next) {
     const realName = Buffer.from(originalname, 'latin1').toString('utf8'); // 转码还原正确的中文名
     responseSuccess(ctx, {
         originalname: realName,
-        filePath: `http://${process.env.DB_HOST}:${process.env.PORT}/uploads/${filename}`
+        filePath: `http://${process.env.ADMIN_HOST}:${process.env.PORT}/uploads/${filename}`
     })
 }
 
