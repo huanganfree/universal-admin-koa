@@ -8,7 +8,7 @@ const ioredis_1 = __importDefault(require("ioredis"));
 const redis = new ioredis_1.default({
     host: process.env.REDIS_HOST,
     port: parseInt(process.env.REDIS_PORT),
-    // password: 'your_password',
+    password: process.env.REDIS_PASSWORD,
 });
 exports.redis = redis;
 redis.on('connect', () => {
