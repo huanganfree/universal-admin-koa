@@ -56,8 +56,6 @@ services:
       - ./uploads:/universal-admin-koa-app/uploads
     environment:
       - NODE_ENV=production
-      - DB_HOST=mysql      # 🌟 覆盖本地 127.0.0.1，指向 Docker 内的网络服务名
-      - REDIS_HOST=redis   # 🌟 覆盖本地 127.0.0.1，指向 Docker 内的网络服务名
     networks:
       - koa-network
 
