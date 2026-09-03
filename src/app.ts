@@ -27,7 +27,7 @@ app.use(async (ctx, next) => {
 
 app.use(mount('/uploads', serve(path.join(__dirname, '../uploads'))));
 
-app.use(jwt({ secret: process.env.JWT_ACCESS_SECRET! }).unless({ path: [/^\/api\/auth\/login$/, /^\/uploads/, /^\/api\/auth\/refresh$/, /^\/api\/auth\/logout$/] }));// 跳过登录
+app.use(jwt({ secret: process.env.JWT_ACCESS_SECRET! }).unless({ path: [/\/api\/auth\/login$/, /\/uploads/, /\/api\/auth\/refresh$/, /\/api\/auth\/logout$/] }));// 跳过登录
 
 app.use(errorMiddleware);
 
