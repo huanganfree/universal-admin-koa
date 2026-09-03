@@ -25,7 +25,7 @@ app.use(async (ctx, next) => {
     await next();
 });
 app.use((0, koa_mount_1.default)('/uploads', (0, koa_static_1.default)(node_path_1.default.join(__dirname, '../uploads'))));
-app.use((0, koa_jwt_1.default)({ secret: process.env.JWT_ACCESS_SECRET }).unless({ path: [/^\/api\/auth\/login$/, /^\/uploads/, /^\/api\/auth\/refresh$/, /^\/api\/auth\/logout$/] })); // 跳过登录
+app.use((0, koa_jwt_1.default)({ secret: process.env.JWT_ACCESS_SECRET }).unless({ path: [/\/api\/auth\/login$/, /\/uploads/, /\/api\/auth\/refresh$/, /\/api\/auth\/logout$/] })); // 跳过登录
 app.use(error_middleware_1.errorMiddleware);
 app.use((0, bodyparser_1.bodyParser)({
     parsedMethods: ['DELETE', 'POST', 'PUT', 'PATCH']
