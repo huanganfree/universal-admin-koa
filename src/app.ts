@@ -12,7 +12,7 @@ import { mountRouters } from './router/index';
 import { errorMiddleware } from './middleware/error.middleware';
 import path from 'node:path';
 
-console.log('当前环境==', process.env.DB_HOST)
+console.log('当前环境==', process.env.NODE_ENV)
 
 const app = new Koa();
 
