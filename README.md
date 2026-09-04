@@ -1,2 +1,17 @@
-# koa-blog-server
-backend server for blog
+# koa-admin-server
+后台管理系统后端服务，使用docker容器化部署
+
+## 完成的功能
+
+- ✅ **鉴权与权限控制**
+  - ✅ 基于 JWT (JSON Web Token) 的用户登录认证
+  - ✅ 基于 RBAC (Role-Based Access Control) 的角色与菜单/接口权限管理
+- ✅ **基础管理模块**
+  - ✅ 用户管理（增删改查、分页、分配角色、重置密码）
+  - ✅ 角色管理（增删改查、分配菜单、按钮权限）
+  - ✅ 菜单与路由管理（动态菜单配置、支持嵌套路由）
+  - ✅ 字典管理（系统常用数据字典的维护与查询）
+- ✅ **工程化与服务治理**
+  - ✅ Docker 容器化部署方案（提供 Dockerfile & docker-compose 配置文件）
+  - ✅ 全局错误捕获与统一响应格式封装
+  - ✅ 日志管理与持久化落盘
